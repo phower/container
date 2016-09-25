@@ -530,7 +530,7 @@ class Container implements ContainerInterface
      * @throws Exception\RuntimeException
      * @throws Exception\InvalidArgumentException
      */
-    public function add($name, $entry, $type, $shared = null)
+    public function add($name, $entry, $type = self::ENTRY_CLASS, $shared = null)
     {
         if ($this->locked) {
             throw new Exception\LockedContainerException();
