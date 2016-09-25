@@ -22,7 +22,7 @@ class CompositeContainer implements CompositeContainerInterface
 
     /**
      * Add container
-     * 
+     *
      * @param \Phower\Container\ContainerInterface $container
      * @return \Phower\Container\CompositeContainer|null
      */
@@ -35,7 +35,7 @@ class CompositeContainer implements CompositeContainerInterface
 
     /**
      * Set containers
-     * 
+     *
      * @param array $containers
      * @return \Phower\Container\CompositeContainer
      */
@@ -52,7 +52,7 @@ class CompositeContainer implements CompositeContainerInterface
 
     /**
      * Get containers
-     * 
+     *
      * @return array
      */
     public function getContainers()
@@ -62,7 +62,7 @@ class CompositeContainer implements CompositeContainerInterface
 
     /**
      * Has
-     * 
+     *
      * @param string $name
      * @return boolean
      */
@@ -94,5 +94,4 @@ class CompositeContainer implements CompositeContainerInterface
 
         throw new Exception\NotFoundException($name);
     }
-
 }

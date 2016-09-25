@@ -10,5 +10,4 @@ class ClassNotFoundExceptionTest extends \PHPUnit_Framework_TestCase
         $exception = new \Phower\Container\Exception\ClassNotFoundException('SomeClass');
         $this->assertInstanceOf(\Phower\Container\Exception\InvalidArgumentException::class, $exception);
     }
-
 }

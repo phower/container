@@ -257,7 +257,7 @@ class Container implements ContainerInterface
 
     /**
      * Allow override
-     * 
+     *
      * @return bool
      */
     public function allowsOverride()
@@ -289,7 +289,7 @@ class Container implements ContainerInterface
 
     /**
      * Is locked
-     * 
+     *
      * @return bool
      */
     public function isLocked()
@@ -316,7 +316,7 @@ class Container implements ContainerInterface
 
     /**
      * Autolock
-     * 
+     *
      * @return bool
      */
     public function autoLock()
@@ -353,12 +353,12 @@ class Container implements ContainerInterface
         $container = $this->delegator ? : $this;
 
         switch ($entry['type']) {
-            case self::ENTRY_CLASS :
+            case self::ENTRY_CLASS:
                 $class = $entry['entry'];
                 $instance = new $class();
 
                 break;
-            case self::ENTRY_FACTORY :
+            case self::ENTRY_FACTORY:
                 if (is_string($entry['entry'])) {
                     $factory = $entry['entry'];
                     $entry['entry'] = new $factory();
@@ -373,7 +373,7 @@ class Container implements ContainerInterface
                 }
 
                 break;
-            case self::ENTRY_ABSTRACT_FACTORY :
+            case self::ENTRY_ABSTRACT_FACTORY:
                 if (is_string($entry['entry'])) {
                     $factory = $entry['entry'];
                     $entry['entry'] = new $factory();
@@ -385,7 +385,7 @@ class Container implements ContainerInterface
                 $instance = $factory->create($container, $name);
 
                 break;
-            case self::ENTRY_ALIAS :
+            case self::ENTRY_ALIAS:
                 $instance = $this->get($entry['entry']);
 
                 break;
@@ -481,7 +481,7 @@ class Container implements ContainerInterface
 
     /**
      * Remove
-     * 
+     *
      * @param string $name
      * @return \Phower\Container\Container
      * @throws Exception\RuntimeException
@@ -540,7 +540,7 @@ class Container implements ContainerInterface
         $shared = $shared === null ? $this->sharedByDefault : (bool) $shared;
 
         switch ($type) {
-            case self::ENTRY_CLASS :
+            case self::ENTRY_CLASS:
                 if (!is_string($entry) && !is_object($entry)) {
                     $type = gettype($entry);
                     $message = sprintf('Argument "entry" in "%s" must be a string or an object; "%s" was given.', __METHOD__, $type);
@@ -556,7 +556,7 @@ class Container implements ContainerInterface
                 }
 
                 break;
-            case self::ENTRY_FACTORY :
+            case self::ENTRY_FACTORY:
                 if (!is_string($entry) && !is_callable($entry) && !$entry instanceof FactoryInterface) {
                     $type = is_object($entry) ? get_class($entry) : gettype($entry);
                     $message = sprintf('Argument "entry" in "%s" must be a string, a callable or an instance '
@@ -576,7 +576,7 @@ class Container implements ContainerInterface
                 }
 
                 break;
-            case self::ENTRY_ABSTRACT_FACTORY :
+            case self::ENTRY_ABSTRACT_FACTORY:
                 if (!is_string($entry) && !$entry instanceof AbstractFactoryInterface) {
                     $type = is_object($entry) ? get_class($entry) : gettype($entry);
                     $message = sprintf('Argument "entry" in "%s" must be a string or an instance '
@@ -596,7 +596,7 @@ class Container implements ContainerInterface
                 }
 
                 break;
-            case self::ENTRY_ALIAS :
+            case self::ENTRY_ALIAS:
                 if (!is_string($entry)) {
                     $type = is_object($entry) ? get_class($entry) : gettype($entry);
                     $message = sprintf('Argument "entry" in "%s" must be a string; "%s" was given.', __METHOD__, $type);
@@ -692,7 +692,7 @@ class Container implements ContainerInterface
 
     /**
      * Normalize name
-     * 
+     *
      * @param string $name
      * @return string
      */
@@ -700,5 +700,4 @@ class Container implements ContainerInterface
     {
         return strtolower(preg_replace("/[^a-zA-Z0-9]+/", '', $name));
     }
-
 }

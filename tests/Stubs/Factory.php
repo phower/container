@@ -12,5 +12,4 @@ class Factory implements FactoryInterface
     {
         return new Dummy();
     }
-
 }

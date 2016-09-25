@@ -11,5 +11,4 @@ class InvalidNameException extends InvalidArgumentException
         $message = sprintf('Argument "name" must be a string and cannot be empty; type "%s" was given.', $type);
         parent::__construct($message);
     }
-
 }

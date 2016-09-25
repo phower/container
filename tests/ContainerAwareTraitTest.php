@@ -14,5 +14,4 @@ class ContainerAwareTraitTest extends \PHPUnit_Framework_TestCase
         $trait->setContainer($container);
         $this->assertSame($container, $trait->getContainer());
     }
-
 }

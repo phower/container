@@ -46,9 +46,8 @@ class CompositeContainerTest extends \PHPUnit_Framework_TestCase
         $container->addClass('dummy', Stubs\Dummy::class);
         $composite->addContainer($container);
         $this->assertInstanceOf(Stubs\Dummy::class, $composite->get('dummy'));
-        
+
         $this->setExpectedException(\Phower\Container\Exception\NotFoundException::class);
         $composite->get('not-there');
     }
-
 }

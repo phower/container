@@ -10,5 +10,4 @@ class InvalidNameExceptionTest extends \PHPUnit_Framework_TestCase
         $exception = new \Phower\Container\Exception\InvalidNameException('SomeClass');
         $this->assertInstanceOf(\Phower\Container\Exception\InvalidArgumentException::class, $exception);
     }
-
 }

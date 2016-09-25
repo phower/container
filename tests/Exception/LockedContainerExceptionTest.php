@@ -10,5 +10,4 @@ class LockedContainerExceptionTest extends \PHPUnit_Framework_TestCase
         $exception = new \Phower\Container\Exception\LockedContainerException('SomeClass');
         $this->assertInstanceOf(\Phower\Container\Exception\RuntimeException::class, $exception);
     }
-
 }

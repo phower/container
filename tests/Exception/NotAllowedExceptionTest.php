@@ -10,5 +10,4 @@ class NotAllowedExceptionTest extends \PHPUnit_Framework_TestCase
         $exception = new \Phower\Container\Exception\NotAllowedException('SomeClass');
         $this->assertInstanceOf(\Phower\Container\Exception\RuntimeException::class, $exception);
     }
-
 }

@@ -18,5 +18,4 @@ class AbstractFactory implements AbstractFactoryInterface
         $name = substr($name, 0, -4);
         return new Dummy($name);
     }
-
 }

@@ -10,5 +10,4 @@ class NotAllowedException extends RuntimeException
         $message = 'Container does not allow override existing names.';
         parent::__construct($message);
     }
-
 }

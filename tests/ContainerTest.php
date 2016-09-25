@@ -215,7 +215,7 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
     {
         $container = new Container();
         $container->add("factoryName", Stubs\Factory::class, Container::ENTRY_FACTORY);
-        $container->add("factoryClosure", function($c) {
+        $container->add("factoryClosure", function ($c) {
             return new Stubs\Dummy();
         }, Container::ENTRY_FACTORY);
         $container->add("factoryObject", new Stubs\Factory(), Container::ENTRY_FACTORY);
@@ -330,7 +330,7 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf(Stubs\Dummy::class, $instance);
         $this->assertSame($instance, $container->get('factoryEntry'));
 
-        $closure = function($c) {
+        $closure = function ($c) {
             return new Stubs\Dummy();
         };
         $container->addFactory('closureEntry', $closure, true);
@@ -370,7 +370,7 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf(Stubs\Dummy::class, $instance);
         $this->assertNotSame($instance, $container->get('factoryEntry'));
 
-        $closure = function($c) {
+        $closure = function ($c) {
             return new Stubs\Dummy();
         };
         $container->addFactory('closureEntry', $closure, false);
@@ -537,5 +537,4 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
         $this->setExpectedException(\Phower\Container\Exception\InvalidArgumentException::class);
         Container::create([Container::CONFIG_ENTRIES => [123]]);
     }
-
 }

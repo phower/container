@@ -9,7 +9,7 @@ interface CompositeContainerInterface extends InteropContainer
 
     /**
      * Add container
-     * 
+     *
      * @param \Phower\Container\ContainerInterface $container
      * @return \Phower\Container\CompositeContainerInterface
      */
@@ -17,7 +17,7 @@ interface CompositeContainerInterface extends InteropContainer
 
     /**
      * Set containers
-     * 
+     *
      * @param array $containers
      * @return \Phower\Container\CompositeContainerInterface
      */
@@ -25,7 +25,7 @@ interface CompositeContainerInterface extends InteropContainer
 
     /**
      * Get containers
-     * 
+     *
      * @return array
      */
     public function getContainers();

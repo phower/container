@@ -18,5 +18,4 @@ class Dummy
     {
         return new static();
     }
-
 }

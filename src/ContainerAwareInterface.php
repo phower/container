@@ -14,7 +14,7 @@ interface ContainerAwareInterface
 
     /**
      * Get container
-     * 
+     *
      * @return \Phower\Container\ContainerInterface
      */
     public function getContainer();

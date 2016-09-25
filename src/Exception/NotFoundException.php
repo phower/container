@@ -10,5 +10,4 @@ class NotFoundException extends RuntimeException implements \Interop\Container\E
         $message = sprintf('Container is unable to find an entry with name "%s".', $name);
         parent::__construct($message);
     }
-
 }

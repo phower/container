@@ -10,5 +10,4 @@ class LockedContainerException extends RuntimeException
         $message = 'Container is locked and can\'t be changed.';
         parent::__construct($message);
     }
-
 }

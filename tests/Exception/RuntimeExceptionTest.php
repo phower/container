@@ -16,5 +16,4 @@ class RuntimeExceptionTest extends \PHPUnit_Framework_TestCase
         $exception = new \Phower\Container\Exception\RuntimeException();
         $this->assertInstanceOf(\Phower\Container\Exception\ContainerExceptionInterface::class, $exception);
     }
-
 }

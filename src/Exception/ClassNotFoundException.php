@@ -11,5 +11,4 @@ class ClassNotFoundException extends InvalidArgumentException
         $message = sprintf('Class "%s" not found.', $type);
         parent::__construct($message);
     }
-
 }

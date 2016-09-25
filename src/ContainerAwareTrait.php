@@ -22,12 +22,11 @@ trait ContainerAwareTrait
 
     /**
      * Get container
-     * 
+     *
      * @return \Phower\Container\ContainerInterface|null
      */
     public function getContainer()
     {
         return $this->container;
     }
-
 }

@@ -16,5 +16,4 @@ class InvalidArgumentExceptionTest extends \PHPUnit_Framework_TestCase
         $exception = new \Phower\Container\Exception\InvalidArgumentException();
         $this->assertInstanceOf(\Phower\Container\Exception\ContainerExceptionInterface::class, $exception);
     }
-
 }

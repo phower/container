@@ -20,5 +20,4 @@ class ContainerAware implements \Phower\Container\ContainerAwareInterface
     {
         return new static();
     }
-
 }
