@@ -1,9 +1,23 @@
 <?php
 
+/**
+ * Phower Container
+ *
+ * @version 0.0.0
+ * @link https://github.com/phower/container Public Git repository
+ * @copyright (c) 2015-2016, Pedro Ferreira <https://phower.com>
+ * @license https://opensource.org/licenses/MIT MIT
+ */
+
 namespace Phower\Container;
 
-use Interop\Container\ContainerInterface as InteropContainer;
+use Interop\Container\ContainerInterface as InteropInterface;
 
+/**
+ * Abstract factory interface
+ *
+ * @author Pedro Ferreira <pedro@phower.com>
+ */
 interface AbstractFactoryInterface
 {
 
@@ -14,7 +28,7 @@ interface AbstractFactoryInterface
      * @param string $name
      * @return bool
      */
-    public function canCreate(InteropContainer $container, $name);
+    public function canCreate(InteropInterface $container, $name);
 
     /**
      * Create
@@ -23,5 +37,5 @@ interface AbstractFactoryInterface
      * @param string $name
      * @return mixed
      */
-    public function create(InteropContainer $container, $name);
+    public function create(InteropInterface $container, $name);
 }
