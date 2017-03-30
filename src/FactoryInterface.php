@@ -11,7 +11,7 @@
 
 namespace Phower\Container;
 
-use Interop\Container\ContainerInterface as InteropInterface;
+use Psr\Container\ContainerInterface as PsrInterface;
 
 /**
  * Factory interface
@@ -24,8 +24,8 @@ interface FactoryInterface
     /**
      * Create
      *
-     * @param \Interop\Container\ContainerInterface $container
+     * @param \Psr\Container\ContainerInterface $container
      * @return mixed
      */
-    public function create(InteropInterface $container);
+    public function create(PsrInterface $container);
 }

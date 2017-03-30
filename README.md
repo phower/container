@@ -1,7 +1,7 @@
 Phower Container
 ================
 
-Dependency Injection for PHP complaint with Container-Interop.
+Dependency Injection for PHP complaint with PSR-11 Container.
 
 Requirements
 ------------
@@ -10,6 +10,13 @@ Phower Container requires:
 
 -   [PHP 5.6](http://php.net/releases/5_6_0.php) or above; 
     version [7.0](http://php.net/releases/7_0_0.php) is recommended
+
+Implementations
+---------------
+
+This package implements:
+
+-   [PSR-11](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-11-container.md)
 
 Instalation
 -----------

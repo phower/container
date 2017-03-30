@@ -11,14 +11,14 @@
 
 namespace Phower\Container;
 
-use Interop\Container\ContainerInterface as InteropInterface;
+use Psr\Container\ContainerInterface as PsrInterface;
 
 /**
  * Composite container interface
  *
  * @author Pedro Ferreira <pedro@phower.com>
  */
-interface CompositeContainerInterface extends InteropInterface
+interface CompositeContainerInterface extends PsrInterface
 {
 
     /**

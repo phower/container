@@ -1,10 +1,14 @@
 {
     "name": "phower/container",
-    "description": "Dependency Injection for PHP complaint with Container-Interop.",
+    "description": "Dependency Injection for PHP complaint with PSR-11 Container.",
     "type": "library",
+    "keywords": [
+        "php",
+        "phower",
+        "container"
+    ],
     "require": {
         "php": "^5.6 || ^7.0",
-        "container-interop/container-interop": "^1.2",
         "psr/container": "^1.0"
     },
     "require-dev": {

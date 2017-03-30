@@ -11,12 +11,14 @@
 
 namespace Phower\Container\Exception;
 
+use Psr\Container\NotFoundExceptionInterface as PsrNotFoundExceptionInterface;
+
 /**
  * Not found exception
  *
  * @author Pedro Ferreira <pedro@phower.com>
  */
-class NotFoundException extends RuntimeException implements \Interop\Container\Exception\NotFoundException
+class NotFoundException extends RuntimeException implements PsrNotFoundExceptionInterface
 {
 
     public function __construct($name)

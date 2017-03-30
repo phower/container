@@ -14,6 +14,6 @@ class NotFoundExceptionTest extends \PHPUnit_Framework_TestCase
     public function testNotFoundExceptionImplementsNotFoundExceptionInterface()
     {
         $exception = new \Phower\Container\Exception\NotFoundException('SomeClass');
-        $this->assertInstanceOf(\Interop\Container\Exception\NotFoundException::class, $exception);
+        $this->assertInstanceOf(\Psr\Container\NotFoundExceptionInterface::class, $exception);
     }
 }

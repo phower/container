@@ -11,12 +11,14 @@
 
 namespace Phower\Container\Exception;
 
+use Psr\Container\ContainerExceptionInterface as PsrContainerExceptionInterface;
+
 /**
  * Container exception interface
  *
  * @author Pedro Ferreira <pedro@phower.com>
  */
-interface ContainerExceptionInterface extends \Interop\Container\Exception\ContainerException
+interface ContainerExceptionInterface extends PsrContainerExceptionInterface
 {
 
 }

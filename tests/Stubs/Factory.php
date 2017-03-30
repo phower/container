@@ -3,7 +3,7 @@
 namespace PhowerTest\Container\Stubs;
 
 use Phower\Container\FactoryInterface;
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 
 class Factory implements FactoryInterface
 {

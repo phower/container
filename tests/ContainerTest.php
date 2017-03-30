@@ -12,7 +12,7 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
         $container = $this->getMockBuilder(Container::class)
                         ->disableOriginalConstructor()->getMock();
         $this->assertInstanceOf(\Phower\Container\ContainerInterface::class, $container);
-        $this->assertInstanceOf(\Interop\Container\ContainerInterface::class, $container);
+        $this->assertInstanceOf(\Psr\Container\ContainerInterface::class, $container);
     }
 
     public function testConstruct()
