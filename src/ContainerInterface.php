@@ -22,6 +22,37 @@ interface ContainerInterface extends PsrContainerInterface
 {
 
     /**
+     * Entry types
+     */
+    const ENTRY_CLASS = 1;
+    const ENTRY_FACTORY = 2;
+    const ENTRY_ABSTRACT_FACTORY = 3;
+    const ENTRY_ALIAS = 4;
+
+    /**
+     * Config names
+     */
+    const CONFIG_SHARED_BY_DEFAULT = 'shared_by_default';
+    const CONFIG_ALLOW_OVERRIDE = 'allow_override';
+    const CONFIG_AUTO_LOCK = 'auto_lock';
+    const CONFIG_ENTRIES = 'entries';
+    const CONFIG_ENTRY_TYPE = 'type';
+    const CONFIG_ENTRY_NAME = 'name';
+    const CONFIG_ENTRY_VALUE = 'value';
+    const CONFIG_ENTRY_SHARED = 'shared';
+    const CONFIG_CLASSES = 'classes';
+    const CONFIG_FACTORIES = 'factories';
+    const CONFIG_ABSTRACT_FACTORIES = 'abstract_factories';
+    const CONFIG_ALIASES = 'aliases';
+
+    /**
+     * Default values
+     */
+    const DEFAULT_ALLOW_OVERRIDE = false;
+    const DEFAULT_AUTO_LOCK = true;
+    const DEFAULT_SHARED_BY_DEFAULT = true;
+
+    /**
      * Set instance
      *
      * @param string $name

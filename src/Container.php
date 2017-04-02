@@ -20,30 +20,6 @@ class Container implements ContainerInterface
 {
 
     /**
-     * Entry types
-     */
-    const ENTRY_CLASS = 1;
-    const ENTRY_FACTORY = 2;
-    const ENTRY_ABSTRACT_FACTORY = 3;
-    const ENTRY_ALIAS = 4;
-
-    /**
-     * Config names
-     */
-    const CONFIG_SHARED_BY_DEFAULT = 'shared_by_default';
-    const CONFIG_ALLOW_OVERRIDE = 'allow_override';
-    const CONFIG_AUTO_LOCK = 'auto_lock';
-    const CONFIG_ENTRIES = 'entries';
-    const CONFIG_ENTRY_TYPE = 'type';
-    const CONFIG_ENTRY_NAME = 'name';
-    const CONFIG_ENTRY_VALUE = 'value';
-    const CONFIG_ENTRY_SHARED = 'shared';
-    const CONFIG_CLASSES = 'classes';
-    const CONFIG_FACTORIES = 'factories';
-    const CONFIG_ABSTRACT_FACTORIES = 'abstract_factories';
-    const CONFIG_ALIASES = 'aliases';
-
-    /**
      * @var array
      */
     private $names = [];
@@ -102,15 +78,15 @@ class Container implements ContainerInterface
      * @param bool $autoLock
      * @param bool $sharedByDefault
      */
-    public function __construct(CompositeContainerInterface $delegator = null, array $instances = [], $allowOverride = false, $autoLock = true, $sharedByDefault = true)
+    public function __construct(CompositeContainerInterface $delegator = null, array $instances = [], $allowOverride = null, $autoLock = null, $sharedByDefault = null)
     {
         if ($delegator) {
             $this->delegator = $delegator;
         }
 
-        $this->allowOverride = $allowOverride;
-        $this->autoLock = $autoLock;
-        $this->sharedByDefault = $sharedByDefault;
+        $this->allowOverride = null === $allowOverride ? self::DEFAULT_ALLOW_OVERRIDE : (bool) $allowOverride;
+        $this->autoLock = null === $autoLock ? self::DEFAULT_AUTO_LOCK : (bool) $autoLock;
+        $this->sharedByDefault = null === $sharedByDefault ? self::DEFAULT_SHARED_BY_DEFAULT : (bool) $sharedByDefault;
 
         foreach ($instances as $name => $instance) {
             $this->set($name, $instance);
