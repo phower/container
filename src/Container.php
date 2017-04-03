@@ -422,9 +422,16 @@ class Container implements ContainerInterface
         $this->checkLockAndValidateName($name);
 
         $normalized = $this->normalizeName($name);
+        $has = $this->has($normalized);
 
-        unset($this->entries[$this->names[$normalized]]);
-        unset($this->names[$normalized]);
+        if ($has) {
+            if (!$this->allowOverride) {
+                throw new Exception\NotAllowedException();
+            }
+
+            unset($this->entries[$this->names[$normalized]]);
+            unset($this->names[$normalized]);
+        }
 
         return $this;
     }
@@ -444,91 +451,24 @@ class Container implements ContainerInterface
     {
         $this->checkLockAndValidateName($name);
 
-        if (trim($name) === '') {
-            throw new Exception\InvalidNameException($name);
-        }
-
         $normalized = $this->normalizeName($name);
-        $has = $this->has($normalized);
-
-        if ($has && !$this->allowOverride) {
-            throw new Exception\NotAllowedException();
-        }
-
-        if ($has) {
-            $this->remove($name);
-        }
-
         $isShared = $shared === null ? $this->sharedByDefault : (bool) $shared;
 
         switch ($type) {
             case self::ENTRY_TYPE_CLASS:
-                if (!is_string($entry) && !is_object($entry)) {
-                    $type = gettype($entry);
-                    $message = sprintf('Argument "entry" in "%s" must be a string or an object; "%s" was given.', __METHOD__, $type);
-                    throw new Exception\InvalidArgumentException($message);
-                }
-
-                if (is_string($entry) && !class_exists($entry)) {
-                    throw new Exception\ClassNotFoundException($entry);
-                }
-
+                $this->validateClassEntry($entry, $name, $isShared);
                 if ($isShared && is_object($entry)) {
                     $this->instances[$name] = $entry;
                 }
-
                 break;
             case self::ENTRY_TYPE_FACTORY:
-                if (!is_string($entry) && !is_callable($entry) && !$entry instanceof FactoryInterface) {
-                    $type = is_object($entry) ? get_class($entry) : gettype($entry);
-                    $message = sprintf('Argument "entry" in "%s" must be a string, a callable or an instance '
-                            . 'of "%s"; "%s" was given.', __METHOD__, FactoryInterface::class, $type);
-                    throw new Exception\InvalidArgumentException($message);
-                }
-
-                if (is_string($entry)) {
-                    if (!class_exists($entry)) {
-                        throw new Exception\ClassNotFoundException($entry);
-                    }
-
-                    if (!is_subclass_of($entry, FactoryInterface::class)) {
-                        $message = sprintf('Entry "%s" in "%s" is expected to be an instance of "%s".', $entry, __METHOD__, FactoryInterface::class);
-                        throw new Exception\InvalidArgumentException($message);
-                    }
-                }
-
+                $this->validateFactoryEntry($entry);
                 break;
             case self::ENTRY_TYPE_ABSTRACT_FACTORY:
-                if (!is_string($entry) && !$entry instanceof AbstractFactoryInterface) {
-                    $type = is_object($entry) ? get_class($entry) : gettype($entry);
-                    $message = sprintf('Argument "entry" in "%s" must be a string or an instance '
-                            . 'of "%s"; "%s" was given.', __METHOD__, AbstractFactoryInterface::class, $type);
-                    throw new Exception\InvalidArgumentException($message);
-                }
-
-                if (is_string($entry)) {
-                    if (!class_exists($entry)) {
-                        throw new Exception\ClassNotFoundException($entry);
-                    }
-
-                    if (!is_subclass_of($entry, AbstractFactoryInterface::class)) {
-                        $message = sprintf('Entry "%s" in "%s" is expected to be an instance of "%s".', $entry, __METHOD__, AbstractFactoryInterface::class);
-                        throw new Exception\InvalidArgumentException($message);
-                    }
-                }
-
+                $this->validateAbstractFactoryEntry($entry);
                 break;
             case self::ENTRY_TYPE_ALIAS:
-                if (!is_string($entry)) {
-                    $type = is_object($entry) ? get_class($entry) : gettype($entry);
-                    $message = sprintf('Argument "entry" in "%s" must be a string; "%s" was given.', __METHOD__, $type);
-                    throw new Exception\InvalidArgumentException($message);
-                }
-
-                if (!$this->has($entry)) {
-                    throw new Exception\NotFoundException($entry);
-                }
-
+                $this->validateAliasEntry($entry);
                 $entry = $this->normalizeName($entry);
                 break;
             default:
@@ -536,6 +476,8 @@ class Container implements ContainerInterface
                 $message = sprintf('Invalid argument "type" in "%s"; please use one of "%s".', __METHOD__, $types);
                 throw new Exception\InvalidArgumentException($message);
         }
+
+        $this->remove($name);
 
         if ($type !== self::ENTRY_TYPE_ABSTRACT_FACTORY) {
             $this->names[$normalized] = $name;
@@ -551,6 +493,102 @@ class Container implements ContainerInterface
     }
 
     /**
+     * Validate class entry.
+     *
+     * @param string|object $entry
+     * @throws Exception\InvalidArgumentException
+     * @throws Exception\ClassNotFoundException
+     */
+    protected function validateClassEntry($entry)
+    {
+        if (!is_string($entry) && !is_object($entry)) {
+            $type = gettype($entry);
+            $message = sprintf('Argument "entry" in "%s" must be a string or an object; "%s" was given.', __METHOD__, $type);
+            throw new Exception\InvalidArgumentException($message);
+        }
+
+        if (is_string($entry) && !class_exists($entry)) {
+            throw new Exception\ClassNotFoundException($entry);
+        }
+    }
+
+    /**
+     * Validate factory entry.
+     *
+     * @param string|\Phower\Container\FactoryInterface $entry
+     * @throws Exception\InvalidArgumentException
+     * @throws Exception\ClassNotFoundException
+     */
+    protected function validateFactoryEntry($entry)
+    {
+        if (!is_string($entry) && !is_callable($entry) && !$entry instanceof FactoryInterface) {
+            $type = is_object($entry) ? get_class($entry) : gettype($entry);
+            $message = sprintf('Argument "entry" in "%s" must be a string, a callable or an instance '
+                    . 'of "%s"; "%s" was given.', __METHOD__, FactoryInterface::class, $type);
+            throw new Exception\InvalidArgumentException($message);
+        }
+
+        if (is_string($entry)) {
+            if (!class_exists($entry)) {
+                throw new Exception\ClassNotFoundException($entry);
+            }
+
+            if (!is_subclass_of($entry, FactoryInterface::class)) {
+                $message = sprintf('Entry "%s" in "%s" is expected to be an instance of "%s".', $entry, __METHOD__, FactoryInterface::class);
+                throw new Exception\InvalidArgumentException($message);
+            }
+        }
+    }
+
+    /**
+     * Validate abastract factory entry.
+     *
+     * @param string|\Phower\Container\AbstractFactoryInterface $entry
+     * @throws Exception\InvalidArgumentException
+     * @throws Exception\ClassNotFoundException
+     */
+    protected function validateAbstractFactoryEntry($entry)
+    {
+        if (!is_string($entry) && !$entry instanceof AbstractFactoryInterface) {
+            $type = is_object($entry) ? get_class($entry) : gettype($entry);
+            $message = sprintf('Argument "entry" in "%s" must be a string or an instance '
+                    . 'of "%s"; "%s" was given.', __METHOD__, AbstractFactoryInterface::class, $type);
+            throw new Exception\InvalidArgumentException($message);
+        }
+
+        if (is_string($entry)) {
+            if (!class_exists($entry)) {
+                throw new Exception\ClassNotFoundException($entry);
+            }
+
+            if (!is_subclass_of($entry, AbstractFactoryInterface::class)) {
+                $message = sprintf('Entry "%s" in "%s" is expected to be an instance of "%s".', $entry, __METHOD__, AbstractFactoryInterface::class);
+                throw new Exception\InvalidArgumentException($message);
+            }
+        }
+    }
+
+    /**
+     * Validate alias entry.
+     *
+     * @param string $entry
+     * @throws Exception\InvalidArgumentException
+     * @throws Exception\NotFoundException
+     */
+    protected function validateAliasEntry($entry)
+    {
+        if (!is_string($entry)) {
+            $type = is_object($entry) ? get_class($entry) : gettype($entry);
+            $message = sprintf('Argument "entry" in "%s" must be a string; "%s" was given.', __METHOD__, $type);
+            throw new Exception\InvalidArgumentException($message);
+        }
+
+        if (!$this->has($entry)) {
+            throw new Exception\NotFoundException($entry);
+        }
+    }
+
+    /**
      * Check lock and validate name.
      *
      * @param string $name
@@ -563,7 +601,7 @@ class Container implements ContainerInterface
             throw new Exception\LockedContainerException();
         }
 
-        if (!is_string($name)) {
+        if (!is_string($name) || trim($name) === '') {
             throw new Exception\InvalidNameException($name);
         }
     }
@@ -640,4 +678,5 @@ class Container implements ContainerInterface
     {
         return strtolower(preg_replace("/[^a-zA-Z0-9]+/", '', $name));
     }
+
 }
