@@ -117,15 +117,7 @@ class ContainerFactory implements ContainerFactoryInterface
 
             if (!in_array($entry[ContainerInterface::CONFIG_ENTRY_TYPE], self::$entryTypes)) {
                 throw new Exception\InvalidArgumentException(sprintf(
-                    'Value "%s" for "%s" is not valid; '
-                        . 'it must be one of "%s" in "%s".',
-                    $options[$key],
-                    $key,
-                    implode(
-                        ', ',
-                        self::$types
-                    ),
-                    __METHOD__
+                        'Value "%s" for "%s" is not valid; it must be one of "%s" in "%s".', $entry[ContainerInterface::CONFIG_ENTRY_TYPE], $key, implode(', ', self::$types), __METHOD__
                 ));
             }
 
@@ -134,4 +126,5 @@ class ContainerFactory implements ContainerFactoryInterface
             $container->add($entry[ContainerInterface::CONFIG_ENTRY_NAME], $entry[ContainerInterface::CONFIG_ENTRY_VALUE], $entry[ContainerInterface::CONFIG_ENTRY_TYPE], $shared);
         }
     }
+
 }
