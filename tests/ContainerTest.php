@@ -3,6 +3,7 @@
 namespace PhowerTest\Container;
 
 use Phower\Container\Container;
+use Phower\Container\ContainerInterface;
 
 class ContainerTest extends \PHPUnit_Framework_TestCase
 {
@@ -169,107 +170,107 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
         $container = new Container();
         $container->lock();
         $this->setExpectedException(\Phower\Container\Exception\RuntimeException::class);
-        $container->add('dummy', Stubs\Dummy::class, Container::ENTRY_CLASS);
+        $container->add('dummy', Stubs\Dummy::class, ContainerInterface::ENTRY_TYPE_CLASS);
     }
 
     public function testAddThrowsExceptionWhenNameIsNotString()
     {
         $container = new Container();
         $this->setExpectedException(\Phower\Container\Exception\InvalidArgumentException::class);
-        $container->add(123, Stubs\Dummy::class, Container::ENTRY_CLASS);
+        $container->add(123, Stubs\Dummy::class, ContainerInterface::ENTRY_TYPE_CLASS);
     }
 
-    public function testAddThrowsExceptionWhenNameIsOREvaluatesToEmptyString()
+    public function testAddThrowsExceptionWhenNameIsOrEvaluatesToEmptyString()
     {
         $container = new Container();
         $this->setExpectedException(\Phower\Container\Exception\InvalidArgumentException::class);
-        $container->add(" \n\t", Stubs\Dummy::class, Container::ENTRY_CLASS);
+        $container->add(" \n\t", Stubs\Dummy::class, ContainerInterface::ENTRY_TYPE_CLASS);
     }
 
     public function testAddThrowsExceptionWhenContainerHasNameAndDoesNotAllowOverride()
     {
         $container = new Container();
         $container->setAllowOverride(true);
-        $container->add("dummy", Stubs\Dummy::class, Container::ENTRY_CLASS);
-        $container->add("dummy", new Stubs\Dummy(), Container::ENTRY_CLASS);
+        $container->add("dummy", Stubs\Dummy::class, ContainerInterface::ENTRY_TYPE_CLASS);
+        $container->add("dummy", new Stubs\Dummy(), ContainerInterface::ENTRY_TYPE_CLASS);
         $container->setAllowOverride(false);
         $this->setExpectedException(\Phower\Container\Exception\RuntimeException::class);
-        $container->add("dummy", Stubs\Dummy::class, Container::ENTRY_CLASS);
+        $container->add("dummy", Stubs\Dummy::class, ContainerInterface::ENTRY_TYPE_CLASS);
     }
 
     public function testAddThrowsExceptionWhenTypeIsClassAndEntryIsNotClassNameOrIsNotObjectInstance()
     {
         $container = new Container();
         $this->setExpectedException(\Phower\Container\Exception\InvalidArgumentException::class);
-        $container->add("dummy", 123, Container::ENTRY_CLASS);
+        $container->add("dummy", 123, ContainerInterface::ENTRY_TYPE_CLASS);
     }
 
     public function testAddThrowsExceptionWhenTypeIsClassAndEntryClassNameDoesNotExist()
     {
         $container = new Container();
         $this->setExpectedException(\Phower\Container\Exception\InvalidArgumentException::class);
-        $container->add("dummy", 'NotAValidClass', Container::ENTRY_CLASS);
+        $container->add("dummy", 'NotAValidClass', ContainerInterface::ENTRY_TYPE_CLASS);
     }
 
     public function testAddThrowsExceptionWhenTypeIsFactoryAndEntryIsNotClassNameIsNotCallableOrIsNotObjectInstance()
     {
         $container = new Container();
-        $container->add("factoryName", Stubs\Factory::class, Container::ENTRY_FACTORY);
+        $container->add("factoryName", Stubs\Factory::class, ContainerInterface::ENTRY_TYPE_FACTORY);
         $container->add("factoryClosure", function ($c) {
             return new Stubs\Dummy();
-        }, Container::ENTRY_FACTORY);
-        $container->add("factoryObject", new Stubs\Factory(), Container::ENTRY_FACTORY);
+        }, ContainerInterface::ENTRY_TYPE_FACTORY);
+        $container->add("factoryObject", new Stubs\Factory(), ContainerInterface::ENTRY_TYPE_FACTORY);
         $this->setExpectedException(\Phower\Container\Exception\InvalidArgumentException::class);
-        $container->add("dummyNumber", 123, Container::ENTRY_FACTORY);
+        $container->add("dummyNumber", 123, ContainerInterface::ENTRY_TYPE_FACTORY);
     }
 
     public function testAddThrowsExceptionWhenTypeIsFactoryAndEntryIsClassNameAndClassDoesNotExist()
     {
         $container = new Container();
         $this->setExpectedException(\Phower\Container\Exception\InvalidArgumentException::class);
-        $container->add("factoryName", 'NotAValidClass', Container::ENTRY_FACTORY);
+        $container->add("factoryName", 'NotAValidClass', ContainerInterface::ENTRY_TYPE_FACTORY);
     }
 
     public function testAddThrowsExceptionWhenTypeIsFactoryAndEntryIsClassNameAndClassIsNotInstanceOfFactoryInterface()
     {
         $container = new Container();
         $this->setExpectedException(\Phower\Container\Exception\InvalidArgumentException::class);
-        $container->add("factoryName", Stubs\Dummy::class, Container::ENTRY_FACTORY);
+        $container->add("factoryName", Stubs\Dummy::class, ContainerInterface::ENTRY_TYPE_FACTORY);
     }
 
     public function testAddThrowsExceptionWhenTypeIsAbstractFactoryAndEntryIsNotClassNameAndIsNotInstanceOfAbstractFactory()
     {
         $container = new Container();
         $this->setExpectedException(\Phower\Container\Exception\InvalidArgumentException::class);
-        $container->add("factoryName", new Stubs\Dummy(), Container::ENTRY_ABSTRACT_FACTORY);
+        $container->add("factoryName", new Stubs\Dummy(), ContainerInterface::ENTRY_TYPE_ABSTRACT_FACTORY);
     }
 
     public function testAddThrowsExceptionWhenTypeIsAbstractFactoryAndEntryIsClassNameAndClassDoesNotExist()
     {
         $container = new Container();
         $this->setExpectedException(\Phower\Container\Exception\InvalidArgumentException::class);
-        $container->add("factoryName", 'NotAValidClass', Container::ENTRY_ABSTRACT_FACTORY);
+        $container->add("factoryName", 'NotAValidClass', ContainerInterface::ENTRY_TYPE_ABSTRACT_FACTORY);
     }
 
     public function testAddThrowsExceptionWhenTypeIsAbstractFactoryAndEntryIsClassNameAndClassIsNotInstanceOfAbstractFactoryInterface()
     {
         $container = new Container();
         $this->setExpectedException(\Phower\Container\Exception\InvalidArgumentException::class);
-        $container->add("factoryName", Stubs\Dummy::class, Container::ENTRY_ABSTRACT_FACTORY);
+        $container->add("factoryName", Stubs\Dummy::class, ContainerInterface::ENTRY_TYPE_ABSTRACT_FACTORY);
     }
 
     public function testAddThrowsExceptionWhenTypeIsAliasAndEntryIsNotString()
     {
         $container = new Container();
         $this->setExpectedException(\Phower\Container\Exception\InvalidArgumentException::class);
-        $container->add("alias", new Stubs\Dummy(), Container::ENTRY_ALIAS);
+        $container->add("alias", new Stubs\Dummy(), ContainerInterface::ENTRY_TYPE_ALIAS);
     }
 
     public function testAddThrowsExceptionWhenTypeIsAliasAndEntryIsNotValidName()
     {
         $container = new Container();
         $this->setExpectedException(\Phower\Container\Exception\NotFoundException::class);
-        $container->add("alias", 'unknown', Container::ENTRY_ALIAS);
+        $container->add("alias", 'unknown', ContainerInterface::ENTRY_TYPE_ALIAS);
     }
 
     public function testAddThrowsExceptionWhenTypeIsNotValid()
@@ -428,113 +429,5 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
         $instance = $container->get('withSimpleContainer');
         $this->assertInstanceOf(\Phower\Container\ContainerAwareInterface::class, $instance);
         $this->assertSame($container, $instance->getContainer());
-    }
-
-    /**
-     * @dataProvider configProvider
-     */
-    public function testFactoryCanCreateContainerFromConfig($config)
-    {
-        /* @var $container \Phower\Container\Container */
-        $container = Container::create($config);
-
-        $sharedByDefault = isset($config[Container::CONFIG_SHARED_BY_DEFAULT]) ?
-                (bool) $config[Container::CONFIG_SHARED_BY_DEFAULT] :
-                $container->isSharedByDefault();
-        $allowOverride = isset($config[Container::CONFIG_ALLOW_OVERRIDE]) ?
-                (bool) $config[Container::CONFIG_ALLOW_OVERRIDE] :
-                $container->allowsOverride();
-        $autoLock = isset($config[Container::CONFIG_AUTO_LOCK]) ?
-                (bool) $config[Container::CONFIG_AUTO_LOCK] :
-                $container->autoLock();
-        $entries = isset($config[Container::CONFIG_ENTRIES]) ?
-                $config[Container::CONFIG_ENTRIES] : [];
-
-        $this->assertInstanceOf(\Phower\Container\ContainerInterface::class, $container);
-        $this->assertEquals($sharedByDefault, $container->isSharedByDefault());
-        $this->assertEquals($allowOverride, $container->allowsOverride());
-        $this->assertEquals($autoLock, $container->autoLock());
-
-        foreach ($entries as $entry) {
-            if ($entry[Container::CONFIG_ENTRY_TYPE] === Container::ENTRY_ABSTRACT_FACTORY) {
-                $this->assertFalse($container->has($entry[Container::CONFIG_ENTRY_NAME]));
-            } else {
-                $this->assertTrue($container->has($entry[Container::CONFIG_ENTRY_NAME]));
-            }
-        }
-    }
-
-    public function configProvider()
-    {
-        return [
-            [[]],
-            [
-                [
-                    Container::CONFIG_SHARED_BY_DEFAULT => true,
-                    Container::CONFIG_ALLOW_OVERRIDE => true,
-                    Container::CONFIG_AUTO_LOCK => true,
-                ]
-            ],
-            [
-                [
-                    Container::CONFIG_SHARED_BY_DEFAULT => false,
-                    Container::CONFIG_ALLOW_OVERRIDE => false,
-                    Container::CONFIG_AUTO_LOCK => false,
-                ]
-            ],
-            [
-                [
-                    Container::CONFIG_ENTRIES => [],
-                ]
-            ],
-            [
-                [
-                    Container::CONFIG_ENTRIES => [
-                        [
-                            Container::CONFIG_ENTRY_NAME => Stubs\Dummy::class,
-                            Container::CONFIG_ENTRY_VALUE => Stubs\Dummy::class,
-                            Container::CONFIG_ENTRY_TYPE => Container::ENTRY_CLASS,
-                        ],
-                        [
-                            Container::CONFIG_ENTRY_NAME => Stubs\Factory::class,
-                            Container::CONFIG_ENTRY_VALUE => Stubs\Factory::class,
-                            Container::CONFIG_ENTRY_TYPE => Container::ENTRY_FACTORY,
-                        ],
-                        [
-                            Container::CONFIG_ENTRY_NAME => Stubs\AbstractFactory::class,
-                            Container::CONFIG_ENTRY_VALUE => Stubs\AbstractFactory::class,
-                            Container::CONFIG_ENTRY_TYPE => Container::ENTRY_ABSTRACT_FACTORY,
-                        ],
-                        [
-                            Container::CONFIG_ENTRY_NAME => 'dummy',
-                            Container::CONFIG_ENTRY_VALUE => Stubs\Dummy::class,
-                            Container::CONFIG_ENTRY_TYPE => Container::ENTRY_ALIAS,
-                        ],
-                    ],
-                ]
-            ],
-            [
-                [
-                    Container::CONFIG_CLASSES => [
-                        Stubs\Dummy::class => Stubs\Dummy::class,
-                    ],
-                    Container::CONFIG_FACTORIES => [
-                        Stubs\Factory::class => Stubs\Factory::class,
-                    ],
-                    Container::CONFIG_ABSTRACT_FACTORIES => [
-                        Stubs\AbstractFactory::class => Stubs\AbstractFactory::class,
-                    ],
-                    Container::CONFIG_ALIASES => [
-                        'dummy' => Stubs\Dummy::class,
-                    ],
-                ]
-            ],
-        ];
-    }
-
-    public function testFactoryRaisesExceptionOnInvalidEntry()
-    {
-        $this->setExpectedException(\Phower\Container\Exception\InvalidArgumentException::class);
-        Container::create([Container::CONFIG_ENTRIES => [123]]);
     }
 }

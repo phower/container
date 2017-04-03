@@ -60,13 +60,15 @@ class Container implements ContainerInterface
     protected $locked = false;
 
     /**
+     * Valid values for entry type.
+     *
      * @var array
      */
-    protected $entryTypes = [
-        self::ENTRY_CLASS,
-        self::ENTRY_FACTORY,
-        self::ENTRY_ABSTRACT_FACTORY,
-        self::ENTRY_ALIAS,
+    protected static $entryTypes = [
+        ContainerInterface::ENTRY_TYPE_CLASS,
+        ContainerInterface::ENTRY_TYPE_FACTORY,
+        ContainerInterface::ENTRY_TYPE_ABSTRACT_FACTORY,
+        ContainerInterface::ENTRY_TYPE_ALIAS,
     ];
 
     /**
@@ -80,93 +82,15 @@ class Container implements ContainerInterface
      */
     public function __construct(CompositeContainerInterface $delegator = null, array $instances = [], $allowOverride = null, $autoLock = null, $sharedByDefault = null)
     {
-        if ($delegator) {
-            $this->delegator = $delegator;
+        $this->delegator = $delegator;
+
+        foreach ($instances as $name => $instance) {
+            $this->set($name, $instance);
         }
 
         $this->allowOverride = null === $allowOverride ? self::DEFAULT_ALLOW_OVERRIDE : (bool) $allowOverride;
         $this->autoLock = null === $autoLock ? self::DEFAULT_AUTO_LOCK : (bool) $autoLock;
         $this->sharedByDefault = null === $sharedByDefault ? self::DEFAULT_SHARED_BY_DEFAULT : (bool) $sharedByDefault;
-
-        foreach ($instances as $name => $instance) {
-            $this->set($name, $instance);
-        }
-    }
-
-    /**
-     * Static factory method to create a new container
-     *
-     * @param array $config
-     * @return \Phower\Container\Container
-     */
-    public static function create(array $config = [])
-    {
-        $container = new static();
-
-        if (isset($config[self::CONFIG_SHARED_BY_DEFAULT])) {
-            $container->setSharedByDefault($config[self::CONFIG_SHARED_BY_DEFAULT]);
-        }
-
-        if (isset($config[self::CONFIG_ALLOW_OVERRIDE])) {
-            $container->setAllowOverride($config[self::CONFIG_ALLOW_OVERRIDE]);
-        }
-
-        if (isset($config[self::CONFIG_AUTO_LOCK])) {
-            $container->setAutoLock($config[self::CONFIG_AUTO_LOCK]);
-        }
-
-        $defaultShared = $container->isSharedByDefault();
-
-        if (isset($config[self::CONFIG_ENTRIES]) && is_array($config[self::CONFIG_ENTRIES])) {
-            $required = [
-                self::CONFIG_ENTRY_TYPE,
-                self::CONFIG_ENTRY_NAME,
-                self::CONFIG_ENTRY_VALUE,
-            ];
-
-            foreach ($config[self::CONFIG_ENTRIES] as $entry) {
-                foreach ($required as $key) {
-                    if (!isset($entry[$key])) {
-                        $message = sprintf('Missing required entry key "%s" in "%s".', $key, __METHOD__);
-                        throw new Exception\InvalidArgumentException($message);
-                    }
-                }
-
-                $shared = isset($entry[self::CONFIG_ENTRY_SHARED]) ? $entry[self::CONFIG_ENTRY_SHARED] : null;
-
-                if ($shared === null) {
-                    $shared = $defaultShared;
-                }
-
-                $container->add($entry[self::CONFIG_ENTRY_NAME], $entry[self::CONFIG_ENTRY_VALUE], $entry[self::CONFIG_ENTRY_TYPE], $shared);
-            }
-        }
-
-        if (isset($config[self::CONFIG_CLASSES]) && is_array($config[self::CONFIG_CLASSES])) {
-            foreach ($config[self::CONFIG_CLASSES] as $name => $class) {
-                $container->addClass($name, $class);
-            }
-        }
-
-        if (isset($config[self::CONFIG_FACTORIES]) && is_array($config[self::CONFIG_FACTORIES])) {
-            foreach ($config[self::CONFIG_FACTORIES] as $name => $factory) {
-                $container->addFactory($name, $factory);
-            }
-        }
-
-        if (isset($config[self::CONFIG_ABSTRACT_FACTORIES]) && is_array($config[self::CONFIG_ABSTRACT_FACTORIES])) {
-            foreach ($config[self::CONFIG_ABSTRACT_FACTORIES] as $name => $factory) {
-                $container->addAbstractFactory($name, $factory);
-            }
-        }
-
-        if (isset($config[self::CONFIG_ALIASES]) && is_array($config[self::CONFIG_ALIASES])) {
-            foreach ($config[self::CONFIG_ALIASES] as $name => $alias) {
-                $container->addAlias($name, $alias);
-            }
-        }
-
-        return $container;
     }
 
     /**
@@ -188,6 +112,7 @@ class Container implements ContainerInterface
         }
 
         $this->delegator = $delegator;
+
         return $this;
     }
 
@@ -215,6 +140,7 @@ class Container implements ContainerInterface
         }
 
         $this->sharedByDefault = (bool) $sharedByDefault;
+
         return $this;
     }
 
@@ -242,6 +168,7 @@ class Container implements ContainerInterface
         }
 
         $this->allowOverride = (bool) $allowOverride;
+
         return $this;
     }
 
@@ -263,6 +190,7 @@ class Container implements ContainerInterface
     public function lock()
     {
         $this->locked = true;
+
         return $this;
     }
 
@@ -274,6 +202,7 @@ class Container implements ContainerInterface
     public function unlock()
     {
         $this->locked = false;
+
         return $this;
     }
 
@@ -301,6 +230,7 @@ class Container implements ContainerInterface
         }
 
         $this->autoLock = (bool) $autoLock;
+
         return $this;
     }
 
@@ -340,15 +270,15 @@ class Container implements ContainerInterface
             return $this->instances[$this->names[$normalized]];
         }
 
-        $container = $this->delegator ? : $this;
+        $container = $this->delegator ?: $this;
 
         switch ($entry['type']) {
-            case self::ENTRY_CLASS:
+            case self::ENTRY_TYPE_CLASS:
                 $class = $entry['entry'];
                 $instance = new $class();
 
                 break;
-            case self::ENTRY_FACTORY:
+            case self::ENTRY_TYPE_FACTORY:
                 if (is_string($entry['entry'])) {
                     $factory = $entry['entry'];
                     $entry['entry'] = new $factory();
@@ -363,7 +293,7 @@ class Container implements ContainerInterface
                 }
 
                 break;
-            case self::ENTRY_ABSTRACT_FACTORY:
+            case self::ENTRY_TYPE_ABSTRACT_FACTORY:
                 if (is_string($entry['entry'])) {
                     $factory = $entry['entry'];
                     $entry['entry'] = new $factory();
@@ -375,7 +305,7 @@ class Container implements ContainerInterface
                 $instance = $factory->create($container, $name);
 
                 break;
-            case self::ENTRY_ALIAS:
+            case self::ENTRY_TYPE_ALIAS:
                 $instance = $this->get($entry['entry']);
 
                 break;
@@ -412,22 +342,38 @@ class Container implements ContainerInterface
         }
 
         foreach ($this->entries as $key => $entry) {
-            if ($entry['type'] === self::ENTRY_ABSTRACT_FACTORY) {
-                if (is_string($entry['entry'])) {
-                    $factory = $entry['entry'];
-                    $this->entries[$key]['entry'] = $entry['entry'] = new $factory();
-                }
-
-                /* @var $factory \Phower\Container\AbstractFactoryInterface */
-                $factory = $entry['entry'];
-                $container = $this->delegator ? : $this;
-
-                if ($factory->canCreate($container, $name)) {
-                    $this->names[$normalized] = $name;
-                    $this->entries[$name] = $entry;
-                    return true;
-                }
+            if ($entry['type'] === self::ENTRY_TYPE_ABSTRACT_FACTORY && $this->hasAbstract($name, $key, $entry)) {
+                return true;
             }
+        }
+
+        return false;
+    }
+
+    /**
+     * Check whether an abstract factory can create a given name.
+     *
+     * @param string $name
+     * @param string $key
+     * @param array $entry
+     * @return boolean
+     */
+    protected function hasAbstract($name, $key, array $entry)
+    {
+        if (is_string($entry['entry'])) {
+            $factory = $entry['entry'];
+            $this->entries[$key]['entry'] = $entry['entry'] = new $factory();
+        }
+
+        /* @var $factory \Phower\Container\AbstractFactoryInterface */
+        $factory = $entry['entry'];
+        $container = $this->delegator ?: $this;
+
+        if ($factory->canCreate($container, $name)) {
+            $normalized = $this->normalizeName($name);
+            $this->names[$normalized] = $name;
+            $this->entries[$name] = $entry;
+            return true;
         }
 
         return false;
@@ -444,13 +390,7 @@ class Container implements ContainerInterface
      */
     public function set($name, $instance)
     {
-        if ($this->locked) {
-            throw new Exception\LockedContainerException();
-        }
-
-        if (!is_string($name)) {
-            throw new Exception\InvalidNameException($name);
-        }
+        $this->checkLockAndValidateName($name);
 
         $has = $this->has($name);
 
@@ -479,13 +419,7 @@ class Container implements ContainerInterface
      */
     public function remove($name)
     {
-        if ($this->locked) {
-            throw new Exception\LockedContainerException();
-        }
-
-        if (!is_string($name)) {
-            throw new Exception\InvalidNameException($name);
-        }
+        $this->checkLockAndValidateName($name);
 
         $normalized = $this->normalizeName($name);
 
@@ -506,13 +440,11 @@ class Container implements ContainerInterface
      * @throws Exception\RuntimeException
      * @throws Exception\InvalidArgumentException
      */
-    public function add($name, $entry, $type = self::ENTRY_CLASS, $shared = null)
+    public function add($name, $entry, $type = self::ENTRY_TYPE_CLASS, $shared = null)
     {
-        if ($this->locked) {
-            throw new Exception\LockedContainerException();
-        }
+        $this->checkLockAndValidateName($name);
 
-        if (!is_string($name) || trim($name) === '') {
+        if (trim($name) === '') {
             throw new Exception\InvalidNameException($name);
         }
 
@@ -527,10 +459,10 @@ class Container implements ContainerInterface
             $this->remove($name);
         }
 
-        $shared = $shared === null ? $this->sharedByDefault : (bool) $shared;
+        $isShared = $shared === null ? $this->sharedByDefault : (bool) $shared;
 
         switch ($type) {
-            case self::ENTRY_CLASS:
+            case self::ENTRY_TYPE_CLASS:
                 if (!is_string($entry) && !is_object($entry)) {
                     $type = gettype($entry);
                     $message = sprintf('Argument "entry" in "%s" must be a string or an object; "%s" was given.', __METHOD__, $type);
@@ -541,12 +473,12 @@ class Container implements ContainerInterface
                     throw new Exception\ClassNotFoundException($entry);
                 }
 
-                if ($shared && is_object($entry)) {
+                if ($isShared && is_object($entry)) {
                     $this->instances[$name] = $entry;
                 }
 
                 break;
-            case self::ENTRY_FACTORY:
+            case self::ENTRY_TYPE_FACTORY:
                 if (!is_string($entry) && !is_callable($entry) && !$entry instanceof FactoryInterface) {
                     $type = is_object($entry) ? get_class($entry) : gettype($entry);
                     $message = sprintf('Argument "entry" in "%s" must be a string, a callable or an instance '
@@ -566,7 +498,7 @@ class Container implements ContainerInterface
                 }
 
                 break;
-            case self::ENTRY_ABSTRACT_FACTORY:
+            case self::ENTRY_TYPE_ABSTRACT_FACTORY:
                 if (!is_string($entry) && !$entry instanceof AbstractFactoryInterface) {
                     $type = is_object($entry) ? get_class($entry) : gettype($entry);
                     $message = sprintf('Argument "entry" in "%s" must be a string or an instance '
@@ -586,7 +518,7 @@ class Container implements ContainerInterface
                 }
 
                 break;
-            case self::ENTRY_ALIAS:
+            case self::ENTRY_TYPE_ALIAS:
                 if (!is_string($entry)) {
                     $type = is_object($entry) ? get_class($entry) : gettype($entry);
                     $message = sprintf('Argument "entry" in "%s" must be a string; "%s" was given.', __METHOD__, $type);
@@ -600,22 +532,40 @@ class Container implements ContainerInterface
                 $entry = $this->normalizeName($entry);
                 break;
             default:
-                $types = implode(', ', $this->entryTypes);
+                $types = implode(', ', self::$entryTypes);
                 $message = sprintf('Invalid argument "type" in "%s"; please use one of "%s".', __METHOD__, $types);
                 throw new Exception\InvalidArgumentException($message);
         }
 
-        if ($type !== self::ENTRY_ABSTRACT_FACTORY) {
+        if ($type !== self::ENTRY_TYPE_ABSTRACT_FACTORY) {
             $this->names[$normalized] = $name;
         }
 
         $this->entries[$name] = [
             'type' => $type,
-            'shared' => $shared,
+            'shared' => $isShared,
             'entry' => $entry,
         ];
 
         return $this;
+    }
+
+    /**
+     * Check lock and validate name.
+     *
+     * @param string $name
+     * @throws Exception\LockedContainerException
+     * @throws Exception\InvalidNameException
+     */
+    protected function checkLockAndValidateName($name)
+    {
+        if ($this->locked) {
+            throw new Exception\LockedContainerException();
+        }
+
+        if (!is_string($name)) {
+            throw new Exception\InvalidNameException($name);
+        }
     }
 
     /**
@@ -628,7 +578,7 @@ class Container implements ContainerInterface
      */
     public function addClass($name, $class, $shared = null)
     {
-        return $this->add($name, $class, self::ENTRY_CLASS, $shared);
+        return $this->add($name, $class, self::ENTRY_TYPE_CLASS, $shared);
     }
 
     /**
@@ -641,7 +591,7 @@ class Container implements ContainerInterface
      */
     public function addFactory($name, $factory, $shared = null)
     {
-        return $this->add($name, $factory, self::ENTRY_FACTORY, $shared);
+        return $this->add($name, $factory, self::ENTRY_TYPE_FACTORY, $shared);
     }
 
     /**
@@ -654,7 +604,7 @@ class Container implements ContainerInterface
      */
     public function addAbstractFactory($name, $abstractFactory, $shared = null)
     {
-        return $this->add($name, $abstractFactory, self::ENTRY_ABSTRACT_FACTORY, $shared);
+        return $this->add($name, $abstractFactory, self::ENTRY_TYPE_ABSTRACT_FACTORY, $shared);
     }
 
     /**
@@ -667,7 +617,7 @@ class Container implements ContainerInterface
      */
     public function addAlias($name, $alias, $shared = null)
     {
-        return $this->add($name, $alias, self::ENTRY_ALIAS, $shared);
+        return $this->add($name, $alias, self::ENTRY_TYPE_ALIAS, $shared);
     }
 
     /**

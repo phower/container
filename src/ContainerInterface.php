@@ -24,10 +24,10 @@ interface ContainerInterface extends PsrContainerInterface
     /**
      * Entry types
      */
-    const ENTRY_CLASS = 1;
-    const ENTRY_FACTORY = 2;
-    const ENTRY_ABSTRACT_FACTORY = 3;
-    const ENTRY_ALIAS = 4;
+    const ENTRY_TYPE_CLASS = 1;
+    const ENTRY_TYPE_FACTORY = 2;
+    const ENTRY_TYPE_ABSTRACT_FACTORY = 3;
+    const ENTRY_TYPE_ALIAS = 4;
 
     /**
      * Config names
