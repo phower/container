@@ -3,7 +3,7 @@
 /**
  * Phower Container
  *
- * @version 0.0.0
+ * @version 1.0.0
  * @link https://github.com/phower/container Public Git repository
  * @copyright (c) 2015-2016, Pedro Ferreira <https://phower.com>
  * @license https://opensource.org/licenses/MIT MIT
@@ -117,7 +117,11 @@ class ContainerFactory implements ContainerFactoryInterface
 
             if (!in_array($entry[ContainerInterface::CONFIG_ENTRY_TYPE], self::$entryTypes)) {
                 throw new Exception\InvalidArgumentException(sprintf(
-                        'Value "%s" for "%s" is not valid; it must be one of "%s" in "%s".', $entry[ContainerInterface::CONFIG_ENTRY_TYPE], $key, implode(', ', self::$types), __METHOD__
+                    'Value "%s" for "%s" is not valid; it must be one of "%s" in "%s".',
+                    $entry[ContainerInterface::CONFIG_ENTRY_TYPE],
+                    $key,
+                    implode(', ', self::$types),
+                    __METHOD__
                 ));
             }
 
@@ -126,5 +130,4 @@ class ContainerFactory implements ContainerFactoryInterface
             $container->add($entry[ContainerInterface::CONFIG_ENTRY_NAME], $entry[ContainerInterface::CONFIG_ENTRY_VALUE], $entry[ContainerInterface::CONFIG_ENTRY_TYPE], $shared);
         }
     }
-
 }
